@@ -99,8 +99,21 @@
   <div class="stage">
     <div class="logo"><span>Stock</span><span>Shredder</span></div>
     <p class="tagline">Raw footage into stock-ready clips</p>
-    <a class="download" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.3.0/Stock-Shredder-0.3.0-arm64.dmg">Download for Mac</a>
-    <p class="note">macOS · Apple Silicon · Signed &amp; notarized</p>
+    <a id="download-mac" class="download" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.3/Stock-Shredder-0.4.3-universal.dmg">Download for Mac</a>
+    <p class="note">macOS · Intel &amp; Apple Silicon · Signed &amp; notarized</p>
   </div>
+  <script>
+    // The href above is a fallback for JS-disabled browsers / a failed fetch below — this call finds
+    // whatever the actual latest release is and points the button there instead, so this page never
+    // goes stale (pointing at an old version, the way it did before this) just because a new build
+    // shipped and nobody remembered to come back and edit this file by hand.
+    fetch('https://api.github.com/repos/stockshredder/stock-shredder-releases/releases/latest')
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((release) => {
+        const dmg = (release.assets || []).find((a) => a.name.endsWith('.dmg'))
+        if (dmg) document.getElementById('download-mac').href = dmg.browser_download_url
+      })
+      .catch(() => {}) // the hardcoded fallback above still works either way
+  </script>
 </body>
 </html>
