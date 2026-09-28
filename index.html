@@ -148,28 +148,43 @@
   }
 
   /* ---------- How it works ---------- */
+  /* Matches the desktop app's own I/II/III/IV SELECT-SHRED-SEND-SHARE walkthrough exactly (same
+     grid, hairline borders, dividers) — except the numerals use SwampWitch here, not the app's
+     Anemouth: Anemouth is personal-use-only licensed, and a public website is broader exposure
+     than a paid desktop app, not less. */
   .steps {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+    grid-template-columns: repeat(4, 1fr);
     margin-top: 48px;
+    border-top: 1px solid rgba(230, 224, 211, 0.14);
+    border-bottom: 1px solid rgba(230, 224, 211, 0.14);
   }
   @media (max-width: 720px) {
-    .steps { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
   }
   .step {
     text-align: center;
+    padding: 28px 16px;
+    border-left: 1px solid rgba(230, 224, 211, 0.14);
+  }
+  .step:first-child {
+    border-left: none;
+  }
+  @media (max-width: 720px) {
+    .step:nth-child(2n+1) { border-left: none; }
   }
   .step-num {
     font-family: 'SwampWitch', 'Impact', sans-serif;
-    font-size: 40px;
-    color: rgba(200, 32, 26, 0.85);
-    margin-bottom: 12px;
+    font-size: 30px;
+    line-height: 1;
+    color: #e6e0d3;
+    margin-bottom: 10px;
   }
-  .step p {
-    color: rgba(230, 224, 211, 0.7);
-    line-height: 1.6;
-    font-size: 15px;
+  .step-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(230, 224, 211, 0.75);
   }
 
   /* ---------- Founder ---------- */
@@ -336,20 +351,24 @@
   </section>
 
   <section class="hairline">
-    <div class="inner">
+    <div class="inner-wide">
       <h2>How it works</h2>
       <div class="steps">
         <div class="step">
           <div class="step-num">I</div>
-          <p>Drop in your raw footage.</p>
+          <div class="step-title">Select</div>
         </div>
         <div class="step">
           <div class="step-num">II</div>
-          <p>Stock Shredder finds the shots worth selling, trims them, and exports them stock-ready.</p>
+          <div class="step-title">Shred</div>
         </div>
         <div class="step">
           <div class="step-num">III</div>
-          <p>Review, adjust anything you'd change. Done.</p>
+          <div class="step-title">Send</div>
+        </div>
+        <div class="step">
+          <div class="step-num">IV</div>
+          <div class="step-title">Share</div>
         </div>
       </div>
     </div>
