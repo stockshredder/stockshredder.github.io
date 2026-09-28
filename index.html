@@ -42,17 +42,37 @@
 
   /* ---------- Hero ---------- */
   .hero {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     padding: 24px;
     text-align: center;
+    overflow: hidden;
+    background: #0a0a09;
+  }
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* A muted, silent recording of the app actually shredding real footage — not stock b-roll.
+       Unlike typical b-roll, this backdrop has its own readable UI text, so it needs a much heavier
+       dim than a plain video would to keep it from competing with the hero copy on top. */
+    opacity: 0.22;
+  }
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
     background:
       radial-gradient(ellipse 70% 140% at 50% -10%, rgba(200, 32, 26, 0.22), transparent 70%),
-      linear-gradient(#0d0d0c, #0a0a09);
+      radial-gradient(ellipse 60% 50% at 50% 50%, rgba(10, 10, 9, 0.65), rgba(10, 10, 9, 0.85) 70%),
+      linear-gradient(180deg, rgba(10, 10, 9, 0.5) 0%, rgba(10, 10, 9, 0.6) 50%, #0a0a09 100%);
   }
   .stage {
+    position: relative;
     width: 100%;
     max-width: 680px;
   }
@@ -338,6 +358,10 @@
 <body>
 
   <section class="hero">
+    <video class="hero-video" autoplay muted loop playsinline poster="hero-poster.jpg">
+      <source src="hero-loop.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-scrim"></div>
     <div class="stage">
       <div class="logo"><span>Stock</span><span>Shredder</span></div>
       <p class="tagline">Raw footage into stock-ready clips</p>
