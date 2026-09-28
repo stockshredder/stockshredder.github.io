@@ -306,6 +306,18 @@
     font-size: 12px;
     color: rgba(230, 224, 211, 0.3);
   }
+  .powered-by {
+    position: fixed;
+    left: 16px;
+    bottom: 14px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(230, 224, 211, 0.35);
+    pointer-events: none;
+    user-select: none;
+    z-index: 10;
+  }
 </style>
 </head>
 <body>
@@ -426,6 +438,7 @@
   </section>
 
   <footer>Stock Shredder · macOS</footer>
+  <span class="powered-by">Powered by DEADWORK</span>
 
   <script>
     // The href (and the version note) above are the fallback for JS-disabled browsers / a failed
