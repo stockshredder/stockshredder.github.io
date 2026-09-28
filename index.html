@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Stock Shredder — raw footage into stock-ready clips</title>
-<meta name="description" content="Turn raw drone and cinema footage into stock-ready clips for Artgrid, Artlist and more." />
+<meta name="description" content="Automated shot selection for stock footage. Drop in raw drone and cinema footage, get stock-ready clips for Artgrid, Artlist and more." />
 
 <meta property="og:title" content="Stock Shredder" />
 <meta property="og:description" content="Raw footage into stock-ready clips." />
@@ -20,26 +20,41 @@
     src: url('SwampWitch.ttf');
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html {
+    scroll-behavior: smooth;
+  }
   html, body {
-    height: 100%;
     background: #0a0a09;
     color: #e6e0d3;
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   }
-  body {
+  section {
+    padding: 96px 24px;
+  }
+  .inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .inner-wide {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     padding: 24px;
+    text-align: center;
     background:
       radial-gradient(ellipse 70% 140% at 50% -10%, rgba(200, 32, 26, 0.22), transparent 70%),
       linear-gradient(#0d0d0c, #0a0a09);
   }
   .stage {
     width: 100%;
-    max-width: 640px;
-    text-align: center;
+    max-width: 680px;
   }
   .logo {
     font-family: 'SwampWitch', 'Impact', sans-serif;
@@ -70,11 +85,21 @@
     text-transform: uppercase;
     color: rgba(230, 224, 211, 0.5);
   }
-  .download {
+  .hero-copy {
+    margin: 28px auto 0;
+    max-width: 520px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(230, 224, 211, 0.75);
+  }
+  /* Reserved for a full-bleed screen recording of a real shred, once one exists to show —
+     deliberately not faked with a placeholder image in the meantime. */
+
+  /* ---------- Buttons ---------- */
+  .btn {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    margin-top: 44px;
     padding: 16px 34px;
     background: #eee7d6;
     color: #0a0a09;
@@ -86,34 +111,335 @@
     border-radius: 2px;
     transition: transform 0.15s ease, background 0.15s ease;
   }
-  .download:hover { background: #ffffff; transform: translateY(-1px); }
+  .btn:hover { background: #ffffff; transform: translateY(-1px); }
   .note {
     margin-top: 18px;
     font-size: 12px;
     color: rgba(230, 224, 211, 0.4);
     letter-spacing: 0.04em;
   }
+  .cta-block {
+    margin-top: 44px;
+  }
+
+  /* ---------- Section headings ---------- */
+  h2 {
+    font-size: 13px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(200, 32, 26, 0.85);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  h3 {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 600;
+  }
+  .lede {
+    font-size: 18px;
+    line-height: 1.7;
+    color: rgba(230, 224, 211, 0.85);
+    text-align: center;
+  }
+  .hairline {
+    border-top: 1px solid rgba(230, 224, 211, 0.1);
+  }
+
+  /* ---------- How it works ---------- */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 48px;
+  }
+  @media (max-width: 720px) {
+    .steps { grid-template-columns: 1fr; }
+  }
+  .step {
+    text-align: center;
+  }
+  .step-num {
+    font-family: 'SwampWitch', 'Impact', sans-serif;
+    font-size: 40px;
+    color: rgba(200, 32, 26, 0.85);
+    margin-bottom: 12px;
+  }
+  .step p {
+    color: rgba(230, 224, 211, 0.7);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ---------- Founder ---------- */
+  .founder {
+    background: linear-gradient(#0a0a09, #0d0d0c);
+  }
+  blockquote {
+    font-size: 22px;
+    line-height: 1.6;
+    text-align: center;
+    color: #e6e0d3;
+    font-style: normal;
+    border: none;
+  }
+  .founder-attr {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(230, 224, 211, 0.5);
+  }
+
+  /* ---------- Pricing ---------- */
+  .free-line {
+    text-align: center;
+    color: rgba(230, 224, 211, 0.75);
+    margin-bottom: 48px;
+    font-size: 16px;
+  }
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 900px) {
+    .plans { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .plans { grid-template-columns: 1fr; }
+  }
+  .plan {
+    border: 1px solid rgba(230, 224, 211, 0.14);
+    padding: 28px 20px;
+    text-align: center;
+    position: relative;
+  }
+  .plan.recommended {
+    border-color: rgba(200, 32, 26, 0.6);
+  }
+  .plan-badge {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #c8201a;
+    color: #f5ede0;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+  .plan-name {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(230, 224, 211, 0.6);
+    margin-bottom: 10px;
+  }
+  .plan-price {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .plan-price span {
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(230, 224, 211, 0.5);
+  }
+  .plan-clips {
+    font-size: 13px;
+    color: rgba(230, 224, 211, 0.5);
+    margin-bottom: 16px;
+  }
+  .plan-note {
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(230, 224, 211, 0.65);
+  }
+
+  /* ---------- Earn ---------- */
+  .earn {
+    background: linear-gradient(#0d0d0c, #0a0a09);
+  }
+  .rewards {
+    margin-top: 40px;
+    border-top: 1px solid rgba(230, 224, 211, 0.1);
+  }
+  .reward {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(230, 224, 211, 0.1);
+  }
+  .reward-name {
+    font-size: 16px;
+    color: #e6e0d3;
+  }
+  .reward-amount {
+    font-size: 15px;
+    color: rgba(200, 32, 26, 0.9);
+    font-weight: 700;
+    white-space: nowrap;
+    padding-left: 16px;
+  }
+  .earn-submit {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  /* ---------- Closing CTA ---------- */
+  .closing {
+    text-align: center;
+    background:
+      radial-gradient(ellipse 70% 140% at 50% 110%, rgba(200, 32, 26, 0.16), transparent 70%),
+      linear-gradient(#0a0a09, #0d0d0c);
+  }
+
+  footer {
+    text-align: center;
+    padding: 32px 24px 48px;
+    font-size: 12px;
+    color: rgba(230, 224, 211, 0.3);
+  }
 </style>
 </head>
 <body>
-  <div class="stage">
-    <div class="logo"><span>Stock</span><span>Shredder</span></div>
-    <p class="tagline">Raw footage into stock-ready clips</p>
-    <a id="download-mac" class="download" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.3/Stock-Shredder-0.4.3-universal.dmg">Download for Mac</a>
-    <p class="note">macOS · Intel &amp; Apple Silicon · Signed &amp; notarized</p>
-    <p class="note" id="version-note">Version 0.4.3</p>
-  </div>
+
+  <section class="hero">
+    <div class="stage">
+      <div class="logo"><span>Stock</span><span>Shredder</span></div>
+      <p class="tagline">Raw footage into stock-ready clips</p>
+      <p class="hero-copy">Automated shot selection, built by someone who's spent hundreds of hours doing it by hand — so you don't have to trust a stranger with the call.</p>
+      <div class="cta-block">
+        <a id="download-mac" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.4/Stock-Shredder-0.4.4-universal.dmg">Start Free — Download for Mac</a>
+        <p class="note">25 clips, no card required · macOS · Intel &amp; Apple Silicon</p>
+        <p class="note" id="version-note">Version 0.4.4</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="hairline">
+    <div class="inner">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">I</div>
+          <p>Drop in your raw footage.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">II</div>
+          <p>Stock Shredder finds the shots worth selling, trims them, and exports them stock-ready.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">III</div>
+          <p>Review, adjust anything you'd change. Done.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hairline">
+    <div class="inner">
+      <h2>Who it's for</h2>
+      <p class="lede">Working filmmakers, videographers, DPs, and small production companies sitting on terabytes of footage that never made it to a stock marketplace. If you finish a shoot, deliver the edit, and let the rest of the card die on a drive, this is for you.</p>
+    </div>
+  </section>
+
+  <section class="founder hairline">
+    <div class="inner">
+      <blockquote>"I've made six figures off stock footage. It's also been a constant derailing — hundreds of hours I could've spent shooting instead of sorting. I built Stock Shredder to fix the one constraint that was costing me the most. It's the same shot selection I'd make myself, automated."</blockquote>
+      <p class="founder-attr">— Founder, Stock Shredder</p>
+    </div>
+  </section>
+
+  <section class="hairline" id="pricing">
+    <div class="inner-wide">
+      <h2>Pricing</h2>
+      <p class="free-line">Start with 25 free clips. No card required.</p>
+      <div class="plans">
+        <div class="plan">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">$25<span>/mo</span></div>
+          <div class="plan-clips">100 clips/mo</div>
+        </div>
+        <div class="plan recommended">
+          <div class="plan-badge">Best value</div>
+          <div class="plan-name">Creator</div>
+          <div class="plan-price">$59<span>/mo</span></div>
+          <div class="plan-clips">400 clips/mo</div>
+        </div>
+        <div class="plan">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$109<span>/mo</span></div>
+          <div class="plan-clips">1,000 clips/mo</div>
+          <div class="plan-note">Starter and Creator tag clips manually. Pro tags them automatically on export.</div>
+        </div>
+        <div class="plan">
+          <div class="plan-name">Studio</div>
+          <div class="plan-price">$199<span>/mo</span></div>
+          <div class="plan-clips">2,000 clips/mo</div>
+          <div class="plan-note">Everything in Pro, plus the iPhone app — process footage remotely, straight from set.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="earn hairline" id="earn">
+    <div class="inner">
+      <h2>Earn</h2>
+      <h3>Help other filmmakers find this. Get paid in clips.</h3>
+      <p class="lede">No ad budget here — just filmmakers telling other filmmakers.</p>
+      <div class="rewards">
+        <div class="reward">
+          <span class="reward-name">Write a review</span>
+          <span class="reward-amount">100 clips</span>
+        </div>
+        <div class="reward">
+          <span class="reward-name">Post and tag on Instagram or TikTok</span>
+          <span class="reward-amount">150 clips</span>
+        </div>
+        <div class="reward">
+          <span class="reward-name">Record a YouTube walkthrough</span>
+          <span class="reward-amount">500 clips</span>
+        </div>
+        <div class="reward">
+          <span class="reward-name">Refer a friend, once they become a paying customer</span>
+          <span class="reward-amount">250 clips each</span>
+        </div>
+      </div>
+      <div class="earn-submit">
+        <a class="btn" href="mailto:shredderstock@gmail.com?subject=Stock%20Shredder%20—%20Earn%20submission">Submit your link</a>
+        <p class="note">Once it's approved, you'll get an access code to add the clips to your account.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="inner">
+      <a id="download-mac-closing" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.4/Stock-Shredder-0.4.4-universal.dmg">Start Free</a>
+    </div>
+  </section>
+
+  <footer>Stock Shredder · macOS</footer>
+
   <script>
     // The href (and the version note) above are the fallback for JS-disabled browsers / a failed
-    // fetch below — this call finds whatever the actual latest release is and points the button
-    // there instead, so this page never goes stale (pointing at an old version, the way it did
-    // before this) just because a new build shipped and nobody remembered to come back and edit
-    // this file by hand.
+    // fetch below — this call finds whatever the actual latest release is and points every download
+    // button there instead, so this page never goes stale just because a new build shipped and
+    // nobody remembered to come back and edit this file by hand.
     fetch('https://api.github.com/repos/stockshredder/stock-shredder-releases/releases/latest')
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((release) => {
         const dmg = (release.assets || []).find((a) => a.name.endsWith('.dmg'))
-        if (dmg) document.getElementById('download-mac').href = dmg.browser_download_url
+        if (dmg) {
+          document.getElementById('download-mac').href = dmg.browser_download_url
+          document.getElementById('download-mac-closing').href = dmg.browser_download_url
+        }
         if (release.tag_name) document.getElementById('version-note').textContent = 'Version ' + release.tag_name.replace(/^v/, '')
       })
       .catch(() => {}) // the hardcoded fallback above still works either way
