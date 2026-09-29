@@ -366,11 +366,6 @@
     text-transform: uppercase;
     color: rgba(230, 224, 211, 0.45);
   }
-  .reviews-empty {
-    text-align: center;
-    color: rgba(230, 224, 211, 0.45);
-    margin-top: 32px;
-  }
   .review-form {
     max-width: 480px;
     margin: 48px auto 0;
@@ -627,7 +622,6 @@
       <h2>Reviews</h2>
       <h3>What people are saying</h3>
       <div id="reviewsList" class="reviews-list"></div>
-      <p id="reviewsEmpty" class="reviews-empty" style="display: none">No reviews yet — be the first.</p>
 
       <form id="reviewForm" class="review-form">
         <div class="review-form-rating" id="ratingPicker">
@@ -774,10 +768,7 @@
       .then((r) => (r.ok ? r.json() : []))
       .then((reviews) => {
         const list = document.getElementById('reviewsList')
-        if (!reviews.length) {
-          document.getElementById('reviewsEmpty').style.display = 'block'
-          return
-        }
+        if (!reviews.length) return
         list.innerHTML = reviews
           .map(
             (r) => `
@@ -790,9 +781,7 @@
           )
           .join('')
       })
-      .catch(() => {
-        document.getElementById('reviewsEmpty').style.display = 'block'
-      })
+      .catch(() => {})
 
     let selectedRating = 0
     document.querySelectorAll('#ratingPicker span').forEach((star) => {
