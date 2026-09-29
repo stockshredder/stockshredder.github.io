@@ -124,12 +124,15 @@
     padding: 16px 34px;
     background: #eee7d6;
     color: #0a0a09;
+    font-family: inherit;
     font-weight: 700;
     font-size: 15px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     text-decoration: none;
+    border: none;
     border-radius: 2px;
+    cursor: pointer;
     transition: transform 0.15s ease, background 0.15s ease;
   }
   .btn:hover { background: #ffffff; transform: translateY(-1px); }
@@ -723,7 +726,7 @@
         </div>
       </div>
       <div class="earn-submit">
-        <a class="btn" href="mailto:shredderstock@gmail.com?subject=Stock%20Shredder%20—%20Earn%20submission">Submit your link</a>
+        <button class="btn" id="earnSubmitOpen" type="button">Submit your link</button>
         <p class="note">Once it's approved, you'll get an access code to add the clips to your account.</p>
       </div>
     </div>
@@ -861,6 +864,23 @@
       <div id="buyModalBody">
         <div id="buyModalError" class="buy-modal-error" style="display: none"></div>
         <div id="checkout"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="buy-overlay" id="earnOverlay" style="display: none">
+    <div class="buy-modal" id="earnModal">
+      <button class="buy-modal-close" id="earnModalClose" type="button" aria-label="Close">&times;</button>
+      <div class="buy-modal-title">Earn</div>
+      <div class="buy-modal-plan">Submit your link</div>
+      <div id="earnModalBody">
+        <p class="buy-modal-note">Share where you posted about Stock Shredder so we can take a look.</p>
+        <div id="earnModalError" class="buy-modal-error" style="display: none"></div>
+        <input type="email" id="earnEmail" placeholder="Your email" />
+        <input type="text" id="earnTiktok" placeholder="TikTok link" />
+        <input type="text" id="earnYoutube" placeholder="YouTube link" />
+        <input type="text" id="earnInstagram" placeholder="Instagram link" />
+        <button class="btn" id="earnSubmitBtn" type="button" style="width: 100%; justify-content: center; margin-top: 16px;">Submit</button>
       </div>
     </div>
   </div>
@@ -1102,6 +1122,69 @@
           })
       })
     }
+
+    // ---------- Earn: submit your link ----------
+    const earnOverlay = document.getElementById('earnOverlay')
+    const earnModalBody = document.getElementById('earnModalBody')
+
+    document.getElementById('earnSubmitOpen').addEventListener('click', () => {
+      earnOverlay.style.display = 'flex'
+    })
+    document.getElementById('earnModalClose').addEventListener('click', closeEarnModal)
+    earnOverlay.addEventListener('click', (e) => {
+      if (e.target === earnOverlay) closeEarnModal()
+    })
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && earnOverlay.style.display !== 'none') closeEarnModal()
+    })
+
+    function closeEarnModal() {
+      earnOverlay.style.display = 'none'
+    }
+
+    document.getElementById('earnSubmitBtn').addEventListener('click', () => {
+      const errorEl = document.getElementById('earnModalError')
+      errorEl.style.display = 'none'
+      const email = document.getElementById('earnEmail').value.trim()
+      const tiktok = document.getElementById('earnTiktok').value.trim()
+      const youtube = document.getElementById('earnYoutube').value.trim()
+      const instagram = document.getElementById('earnInstagram').value.trim()
+      if (!email) {
+        errorEl.textContent = 'Your email is required.'
+        errorEl.style.display = 'block'
+        return
+      }
+      if (!tiktok && !youtube && !instagram) {
+        errorEl.textContent = 'Add at least one link.'
+        errorEl.style.display = 'block'
+        return
+      }
+      const submitBtn = document.getElementById('earnSubmitBtn')
+      submitBtn.disabled = true
+      submitBtn.textContent = 'Submitting…'
+      fetch(REVIEWS_API + '/earn-submission', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, tiktok, youtube, instagram })
+      })
+        .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+        .then(({ ok, data }) => {
+          if (!ok) {
+            submitBtn.disabled = false
+            submitBtn.textContent = 'Submit'
+            errorEl.textContent = data.error || 'Could not submit — try again in a moment.'
+            errorEl.style.display = 'block'
+            return
+          }
+          earnModalBody.innerHTML = '<p class="buy-modal-note">Thanks! Once it’s approved, you’ll get an access code to add the clips to your account.</p>'
+        })
+        .catch(() => {
+          submitBtn.disabled = false
+          submitBtn.textContent = 'Submit'
+          errorEl.textContent = 'Could not reach the server — try again in a moment.'
+          errorEl.style.display = 'block'
+        })
+    })
   </script>
 </body>
 </html>
