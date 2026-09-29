@@ -830,12 +830,20 @@
     })
 
     // ---------- FAQ ----------
-    document.querySelectorAll('.faq-item').forEach((item) => {
+    const faqItems = document.querySelectorAll('.faq-item')
+    faqItems.forEach((item) => {
       const button = item.querySelector('.faq-question')
       const icon = item.querySelector('.faq-icon')
       button.addEventListener('click', () => {
-        const nowOpen = item.classList.toggle('open')
-        icon.textContent = nowOpen ? '−' : '+'
+        const nowOpen = !item.classList.contains('open')
+        faqItems.forEach((other) => {
+          other.classList.remove('open')
+          other.querySelector('.faq-icon').textContent = '+'
+        })
+        if (nowOpen) {
+          item.classList.add('open')
+          icon.textContent = '−'
+        }
       })
     })
   </script>
