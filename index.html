@@ -305,6 +305,108 @@
     line-height: 1.5;
     color: rgba(230, 224, 211, 0.65);
   }
+  .plan-buy {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    padding: 10px 16px;
+    background: transparent;
+    color: #e6e0d3;
+    border: 1px solid rgba(230, 224, 211, 0.3);
+    border-radius: 2px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .plan-buy:hover {
+    background: rgba(200, 32, 26, 0.12);
+    border-color: rgba(200, 32, 26, 0.6);
+  }
+
+  /* ---------- Buy modal ---------- */
+  .buy-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 100;
+  }
+  .buy-modal {
+    background: #101009;
+    border: 1px solid rgba(230, 224, 211, 0.18);
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    position: relative;
+  }
+  .buy-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: rgba(230, 224, 211, 0.6);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .buy-modal-close:hover {
+    color: #e6e0d3;
+  }
+  .buy-modal-title {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(230, 224, 211, 0.6);
+    margin-bottom: 4px;
+  }
+  .buy-modal-plan {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .buy-modal-error {
+    color: #e8827a;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .buy-modal-key {
+    font-size: 20px;
+    text-align: center;
+    padding: 16px 0;
+    letter-spacing: 0.04em;
+    background: rgba(230, 224, 211, 0.06);
+    margin: 16px 0;
+    user-select: text;
+  }
+  .buy-modal input {
+    width: 100%;
+    padding: 12px 14px;
+    background: transparent;
+    border: 1px solid rgba(230, 224, 211, 0.25);
+    color: #e6e0d3;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .buy-modal-note {
+    font-size: 13px;
+    color: rgba(230, 224, 211, 0.6);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+  .buy-modal-status {
+    font-size: 13px;
+    color: rgba(230, 224, 211, 0.75);
+    margin-top: 10px;
+  }
 
   /* ---------- Earn ---------- */
   .earn {
@@ -561,6 +663,7 @@
           <div class="plan-price">$25<span>/mo</span></div>
           <div class="plan-clips">100 clips/mo</div>
           <div class="plan-per-clip">$0.25 / clip</div>
+          <button class="plan-buy" data-plan="starter">Buy now</button>
         </div>
         <div class="plan recommended">
           <div class="plan-badge">Best value</div>
@@ -568,6 +671,7 @@
           <div class="plan-price">$59<span>/mo</span></div>
           <div class="plan-clips">400 clips/mo</div>
           <div class="plan-per-clip">$0.15 / clip</div>
+          <button class="plan-buy" data-plan="creator">Buy now</button>
         </div>
         <div class="plan">
           <div class="plan-name">Pro</div>
@@ -575,6 +679,7 @@
           <div class="plan-clips">1,000 clips/mo</div>
           <div class="plan-per-clip">$0.11 / clip</div>
           <div class="plan-note">Pro creates keywords to copy & paste.</div>
+          <button class="plan-buy" data-plan="pro">Buy now</button>
         </div>
         <div class="plan">
           <div class="plan-name">Studio</div>
@@ -582,6 +687,7 @@
           <div class="plan-clips">2,000 clips/mo</div>
           <div class="plan-per-clip">$0.10 / clip</div>
           <div class="plan-note">Everything in Pro, plus the iPhone app to process footage remotely.</div>
+          <button class="plan-buy" data-plan="studio">Buy now</button>
         </div>
       </div>
       <p class="note" style="text-align: center">All plans run on a 12-month commitment, billed monthly. Canceling early carries a one-time 3-month payout — see the FAQ below for details.</p>
@@ -735,6 +841,19 @@
   </footer>
   <span class="powered-by">Powered by DEADWORK</span>
 
+  <div class="buy-overlay" id="buyOverlay" style="display: none">
+    <div class="buy-modal" id="buyModal">
+      <button class="buy-modal-close" id="buyModalClose" type="button" aria-label="Close">&times;</button>
+      <div class="buy-modal-title">Subscribing to</div>
+      <div class="buy-modal-plan" id="buyModalPlanName"></div>
+      <div id="buyModalBody">
+        <div id="buyModalError" class="buy-modal-error" style="display: none"></div>
+        <div id="checkout"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://js.stripe.com/v3/"></script>
   <script>
     // The href (and the version note) above are the fallback for JS-disabled browsers / a failed
     // fetch below — this call finds whatever the actual latest release is and points every download
@@ -847,6 +966,130 @@
         }
       })
     })
+
+    // ---------- Buy now ----------
+    // Same publishable key, Worker, and embedded-checkout pattern the desktop app itself uses
+    // (src/shared/stripe.ts, src/renderer/src/CheckoutPanel.tsx) — this reuses the exact same
+    // /checkout and /verify routes, so there's no separate payment path to maintain.
+    const STRIPE_PUBLISHABLE_KEY = 'pk_test_51UIwxREHfnNaW3GQ913S4kWMAxlgqjxZXMHiKrQYgJ7xK2GtFWkMknQum3EI2BID71pORSQGtQPOFM7QPY0CtLjS00JsMgXnmj'
+    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY)
+    const PLAN_NAMES = { starter: 'Starter', creator: 'Creator', pro: 'Pro', studio: 'Studio' }
+    const DOWNLOAD_URL = 'https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.4/Stock-Shredder-0.4.4-universal.dmg'
+
+    const buyOverlay = document.getElementById('buyOverlay')
+    const buyModalPlanName = document.getElementById('buyModalPlanName')
+    const buyModalBody = document.getElementById('buyModalBody')
+    const buyModalClose = document.getElementById('buyModalClose')
+
+    let currentCheckout = null
+    let currentSessionId = null
+
+    document.querySelectorAll('.plan-buy').forEach((button) => {
+      button.addEventListener('click', () => void openBuyModal(button.dataset.plan))
+    })
+    buyModalClose.addEventListener('click', closeBuyModal)
+    buyOverlay.addEventListener('click', (e) => {
+      if (e.target === buyOverlay) closeBuyModal()
+    })
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && buyOverlay.style.display !== 'none') closeBuyModal()
+    })
+
+    function resetBuyModalBody() {
+      buyModalBody.innerHTML = '<div id="buyModalError" class="buy-modal-error" style="display: none"></div><div id="checkout"></div>'
+    }
+
+    function closeBuyModal() {
+      buyOverlay.style.display = 'none'
+      if (currentCheckout) {
+        currentCheckout.destroy()
+        currentCheckout = null
+      }
+      currentSessionId = null
+      resetBuyModalBody()
+    }
+
+    async function openBuyModal(planId) {
+      buyModalPlanName.textContent = PLAN_NAMES[planId] || planId
+      resetBuyModalBody()
+      buyOverlay.style.display = 'flex'
+      try {
+        currentCheckout = await stripe.createEmbeddedCheckoutPage({
+          fetchClientSecret: async () => {
+            const res = await fetch(REVIEWS_API + '/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ planId })
+            })
+            const data = await res.json()
+            if (!data.clientSecret || !data.sessionId) throw new Error('Could not start checkout')
+            currentSessionId = data.sessionId
+            return data.clientSecret
+          },
+          onComplete: () => void handlePurchaseComplete()
+        })
+        currentCheckout.mount('#checkout')
+      } catch {
+        const errorEl = document.getElementById('buyModalError')
+        errorEl.textContent = 'Could not start checkout — try again in a moment.'
+        errorEl.style.display = 'block'
+      }
+    }
+
+    async function handlePurchaseComplete() {
+      if (!currentSessionId) return
+      if (currentCheckout) {
+        currentCheckout.destroy()
+        currentCheckout = null
+      }
+      const sessionId = currentSessionId
+      buyModalBody.innerHTML = '<p class="buy-modal-note">Confirming your payment…</p>'
+      try {
+        const res = await fetch(REVIEWS_API + '/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId })
+        })
+        const data = await res.json()
+        if (!data.ok || !data.activationKey) {
+          buyModalBody.innerHTML = '<p class="buy-modal-error">We could not confirm the payment. If you were charged, email shredderstock@gmail.com and we’ll sort it out.</p>'
+          return
+        }
+        showActivationKey(data.activationKey)
+      } catch {
+        buyModalBody.innerHTML = '<p class="buy-modal-error">We could not confirm the payment. If you were charged, email shredderstock@gmail.com and we’ll sort it out.</p>'
+      }
+    }
+
+    function showActivationKey(activationKey) {
+      buyModalBody.innerHTML = `
+        <p class="buy-modal-note">You're all set. Here's your activation key — download the app, choose "Activate with a key," and paste this in.</p>
+        <div class="buy-modal-key">${activationKey}</div>
+        <a class="btn" href="${DOWNLOAD_URL}" style="width: 100%; justify-content: center; margin-top: 8px;">Download for Mac</a>
+        <p class="buy-modal-note">Want it emailed too?</p>
+        <input type="email" id="buyModalEmail" placeholder="you@example.com" />
+        <button class="btn" id="buyModalEmailSend" type="button" style="width: 100%; justify-content: center; margin-top: 12px;">Email me a copy</button>
+        <p class="buy-modal-status" id="buyModalEmailStatus"></p>
+      `
+      document.getElementById('buyModalEmailSend').addEventListener('click', () => {
+        const email = document.getElementById('buyModalEmail').value.trim()
+        if (!email) return
+        const status = document.getElementById('buyModalEmailStatus')
+        status.textContent = 'Sending…'
+        fetch(REVIEWS_API + '/resend-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            status.textContent = data.message || 'Sent.'
+          })
+          .catch(() => {
+            status.textContent = 'Could not reach the server — try again in a moment.'
+          })
+      })
+    }
   </script>
 </body>
 </html>
