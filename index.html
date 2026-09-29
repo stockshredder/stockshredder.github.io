@@ -341,6 +341,85 @@
     margin-top: 40px;
   }
 
+  /* ---------- Reviews ---------- */
+  .reviews-list {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .review-card {
+    border: 1px solid rgba(230, 224, 211, 0.14);
+    padding: 22px;
+  }
+  .review-stars {
+    color: rgba(200, 32, 26, 0.9);
+    font-size: 15px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .review-body {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(230, 224, 211, 0.85);
+    margin-bottom: 14px;
+  }
+  .review-name {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(230, 224, 211, 0.45);
+  }
+  .reviews-empty {
+    text-align: center;
+    color: rgba(230, 224, 211, 0.45);
+    margin-top: 32px;
+  }
+  .review-form {
+    max-width: 480px;
+    margin: 48px auto 0;
+    text-align: left;
+  }
+  .review-form input,
+  .review-form textarea {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(230, 224, 211, 0.24);
+    color: #e6e0d3;
+    font: inherit;
+    font-size: 15px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    border-radius: 2px;
+  }
+  .review-form textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  .review-form-rating {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-size: 26px;
+    justify-content: center;
+  }
+  .review-form-rating span {
+    cursor: pointer;
+    color: rgba(230, 224, 211, 0.3);
+  }
+  .review-form-rating span.filled {
+    color: rgba(200, 32, 26, 0.9);
+  }
+  .review-form-foot {
+    text-align: center;
+  }
+  .review-status {
+    text-align: center;
+    margin-top: 16px;
+    color: rgba(230, 224, 211, 0.75);
+  }
+
   /* ---------- Closing CTA ---------- */
   .closing {
     text-align: center;
@@ -506,6 +585,32 @@
     </div>
   </section>
 
+  <section class="hairline" id="reviews">
+    <div class="inner-wide">
+      <h2>Reviews</h2>
+      <h3>What people are saying</h3>
+      <div id="reviewsList" class="reviews-list"></div>
+      <p id="reviewsEmpty" class="reviews-empty" style="display: none">No reviews yet — be the first.</p>
+
+      <form id="reviewForm" class="review-form">
+        <div class="review-form-rating" id="ratingPicker">
+          <span data-star="1">★</span>
+          <span data-star="2">★</span>
+          <span data-star="3">★</span>
+          <span data-star="4">★</span>
+          <span data-star="5">★</span>
+        </div>
+        <input type="text" id="reviewName" placeholder="Your name" required maxlength="100" />
+        <input type="email" id="reviewEmail" placeholder="Your email (not shown publicly)" required />
+        <textarea id="reviewBody" placeholder="What's your experience been like?" required maxlength="2000"></textarea>
+        <div class="review-form-foot">
+          <button type="submit" class="btn">Submit review</button>
+        </div>
+        <p id="reviewStatus" class="review-status"></p>
+      </form>
+    </div>
+  </section>
+
   <section class="closing">
     <div class="inner">
       <a id="download-mac-closing" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.4/Stock-Shredder-0.4.4-universal.dmg">Start Free</a>
@@ -542,6 +647,89 @@
         if (release.tag_name) document.getElementById('version-note').textContent = 'Version ' + release.tag_name.replace(/^v/, '')
       })
       .catch(() => {}) // the hardcoded fallback above still works either way
+
+    // ---------- Reviews ----------
+    const REVIEWS_API = 'https://stock-shredder-payments.stockshredder.workers.dev'
+
+    function renderStars(n) {
+      return '★'.repeat(n) + '☆'.repeat(5 - n)
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement('div')
+      div.textContent = s
+      return div.innerHTML
+    }
+
+    fetch(REVIEWS_API + '/reviews')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((reviews) => {
+        const list = document.getElementById('reviewsList')
+        if (!reviews.length) {
+          document.getElementById('reviewsEmpty').style.display = 'block'
+          return
+        }
+        list.innerHTML = reviews
+          .map(
+            (r) => `
+          <div class="review-card">
+            <div class="review-stars">${renderStars(r.rating)}</div>
+            <p class="review-body">${escapeHtml(r.body)}</p>
+            <p class="review-name">${escapeHtml(r.name)}</p>
+          </div>
+        `
+          )
+          .join('')
+      })
+      .catch(() => {
+        document.getElementById('reviewsEmpty').style.display = 'block'
+      })
+
+    let selectedRating = 0
+    document.querySelectorAll('#ratingPicker span').forEach((star) => {
+      star.addEventListener('click', () => {
+        selectedRating = Number(star.dataset.star)
+        document.querySelectorAll('#ratingPicker span').forEach((s) => {
+          s.classList.toggle('filled', Number(s.dataset.star) <= selectedRating)
+        })
+      })
+    })
+
+    document.getElementById('reviewForm').addEventListener('submit', (e) => {
+      e.preventDefault()
+      const status = document.getElementById('reviewStatus')
+      if (!selectedRating) {
+        status.textContent = 'Pick a star rating first.'
+        return
+      }
+      const name = document.getElementById('reviewName').value.trim()
+      const email = document.getElementById('reviewEmail').value.trim()
+      const body = document.getElementById('reviewBody').value.trim()
+      const submitBtn = document.querySelector('#reviewForm button[type="submit"]')
+      submitBtn.disabled = true
+      status.textContent = 'Submitting…'
+      fetch(REVIEWS_API + '/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, rating: selectedRating, body })
+      })
+        .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+          submitBtn.disabled = false
+          if (ok) {
+            status.textContent = "Thanks! Your review is in — it'll show up here once it's approved."
+            document.getElementById('reviewForm').reset()
+            selectedRating = 0
+            document.querySelectorAll('#ratingPicker span').forEach((s) => s.classList.remove('filled'))
+          } else {
+            status.textContent = data.error || 'Could not submit that — try again in a moment.'
+          }
+        })
+        .catch(() => {
+          submitBtn.disabled = false
+          status.textContent = 'Could not reach the server — try again in a moment.'
+        })
+    })
   </script>
 </body>
 </html>
