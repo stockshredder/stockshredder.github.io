@@ -416,6 +416,52 @@
     color: rgba(230, 224, 211, 0.75);
   }
 
+  /* ---------- FAQ ---------- */
+  .faq-list {
+    margin-top: 40px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .faq-item {
+    border-bottom: 1px solid rgba(230, 224, 211, 0.14);
+  }
+  .faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: none;
+    border: 0;
+    padding: 22px 4px;
+    font: inherit;
+    font-size: 16px;
+    color: #e6e0d3;
+    text-align: left;
+    cursor: pointer;
+  }
+  .faq-question:hover {
+    color: #ffffff;
+  }
+  .faq-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+    color: rgba(200, 32, 26, 0.9);
+    width: 20px;
+    text-align: center;
+  }
+  .faq-answer {
+    display: none;
+    padding: 0 26px 22px 4px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(230, 224, 211, 0.65);
+  }
+  .faq-item.open .faq-answer {
+    display: block;
+  }
+
   /* ---------- Closing CTA ---------- */
   .closing {
     text-align: center;
@@ -602,6 +648,78 @@
     </div>
   </section>
 
+  <section class="hairline" id="faq">
+    <div class="inner-wide">
+      <h2>FAQ</h2>
+      <h3>Questions, answered</h3>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Do unused clips expire?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">No. Unused credits roll over every month, with no cap — once you've paid for them, they're yours to use whenever you're ready.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What footage formats does it support?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">DJI D-Log, Sony S-Log3, RED, and ARRI LogC3 out of the box, plus your own custom LUT if you'd rather use that.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Can I use my activation key on more than one computer?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">Each key is tied to one computer at a time. Moving to a new machine? Just reach out and we'll reset it for you.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Is there a free trial?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">Yes — 25 free clips, no card required, right from your first download.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What does automatic keyword tagging do?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">On Pro and Studio, Stock Shredder generates ready-to-paste keywords for every exported clip — no typing tags by hand for each stock marketplace submission.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What's the iPhone app for?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">On Studio, you can approve or deny clips remotely from your phone — process footage straight from set without being at your computer.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Can I cancel or change my plan anytime?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">Yes. Manage or cancel your subscription anytime from right inside the app.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What if I lose my activation key?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">Open the app's Account menu to see it anytime, or have a copy emailed to you.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Which platforms do you support?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">macOS today, on both Intel and Apple Silicon. Windows support is on the way.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="closing">
     <div class="inner">
       <a id="download-mac-closing" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.4/Stock-Shredder-0.4.4-universal.dmg">Start Free</a>
@@ -720,6 +838,16 @@
           submitBtn.disabled = false
           status.textContent = 'Could not reach the server — try again in a moment.'
         })
+    })
+
+    // ---------- FAQ ----------
+    document.querySelectorAll('.faq-item').forEach((item) => {
+      const button = item.querySelector('.faq-question')
+      const icon = item.querySelector('.faq-icon')
+      button.addEventListener('click', () => {
+        const nowOpen = item.classList.toggle('open')
+        icon.textContent = nowOpen ? '−' : '+'
+      })
     })
   </script>
 </body>
