@@ -29,7 +29,7 @@
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   section {
-    padding: 96px 24px;
+    padding: 64px 24px;
   }
   .inner {
     max-width: 720px;
@@ -46,8 +46,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    padding: 24px;
+    /* Was min-height: 100vh - forced full-screen height regardless of content, which left a large
+       dead gap below the CTA once the step rail made the hero's own content taller than before. */
+    padding: 64px 24px;
     text-align: center;
     overflow: hidden;
     background: #0a0a09;
