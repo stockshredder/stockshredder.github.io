@@ -680,10 +680,10 @@
         </div>
       </div>
       <div class="cta-block">
-        <a id="download-mac" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.4/Stock-Shredder-0.4.4-universal.dmg">Start Free — Download for Mac</a>
+        <a id="download-mac" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-0.6.0-universal.dmg">Start Free — Download for Mac</a>
         <p class="note">25 clips, no card required · macOS · Intel &amp; Apple Silicon</p>
-        <p class="note" id="version-note">Version 0.4.4</p>
-        <p class="note"><a href="https://github.com/stockshredder/stock-shredder-releases/releases/download/windows-test-0.5.0/Stock-Shredder-0.5.0-win-x64.zip" style="color: inherit">Windows (early test build, unsigned — not yet fully verified)</a></p>
+        <p class="note" id="version-note">Version 0.6.0</p>
+        <p class="note">Windows support is on the way — not ready to download yet.</p>
       </div>
     </div>
   </section>
@@ -876,7 +876,7 @@
 
   <section class="closing">
     <div class="inner">
-      <a id="download-mac-closing" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.4/Stock-Shredder-0.4.4-universal.dmg">Start Free</a>
+      <a id="download-mac-closing" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-0.6.0-universal.dmg">Start Free</a>
       <p class="note">25 clips, no card required · macOS · Intel &amp; Apple Silicon</p>
     </div>
   </section>
@@ -938,6 +938,7 @@
         if (dmg) {
           document.getElementById('download-mac').href = dmg.browser_download_url
           document.getElementById('download-mac-closing').href = dmg.browser_download_url
+          DOWNLOAD_URL = dmg.browser_download_url
         }
         if (release.tag_name) document.getElementById('version-note').textContent = 'Version ' + release.tag_name.replace(/^v/, '')
       })
@@ -1046,7 +1047,11 @@
     const STRIPE_PUBLISHABLE_KEY = 'pk_test_51UIwxREHfnNaW3GQ913S4kWMAxlgqjxZXMHiKrQYgJ7xK2GtFWkMknQum3EI2BID71pORSQGtQPOFM7QPY0CtLjS00JsMgXnmj'
     const stripe = Stripe(STRIPE_PUBLISHABLE_KEY)
     const PLAN_NAMES = { starter: 'Starter', creator: 'Creator', pro: 'Pro', studio: 'Studio' }
-    const DOWNLOAD_URL = 'https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.4.4/Stock-Shredder-0.4.4-universal.dmg'
+    // Hardcoded fallback only — kept up to date by the same fetch-latest call above the Reviews
+    // section, the same reasoning as download-mac's own href: this used to be a separate `const`
+    // that nothing ever refreshed, so the buy modal kept pointing new customers at an old version
+    // long after download-mac itself had moved on.
+    let DOWNLOAD_URL = 'https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-0.6.0-universal.dmg'
 
     const buyOverlay = document.getElementById('buyOverlay')
     const buyModalPlanName = document.getElementById('buyModalPlanName')
