@@ -1107,7 +1107,7 @@
     // Same publishable key, Worker, and embedded-checkout pattern the desktop app itself uses
     // (src/shared/stripe.ts, src/renderer/src/CheckoutPanel.tsx) — this reuses the exact same
     // /checkout and /verify routes, so there's no separate payment path to maintain.
-    const STRIPE_PUBLISHABLE_KEY = 'pk_test_51UIwxREHfnNaW3GQ913S4kWMAxlgqjxZXMHiKrQYgJ7xK2GtFWkMknQum3EI2BID71pORSQGtQPOFM7QPY0CtLjS00JsMgXnmj'
+    const STRIPE_PUBLISHABLE_KEY = 'pk_live_51UIwxREHfnNaW3GQg8edd5eoY1Y3hQJDOKAZvbJiH2xLLjvoyIUdBTXiO55w31LCjPLcwozvcZIn10AlQkBCEh3h00gjfoagZc'
     const stripe = Stripe(STRIPE_PUBLISHABLE_KEY)
     const PLAN_NAMES = { starter: 'Starter', creator: 'Creator', pro: 'Pro', studio: 'Studio' }
     // Hardcoded fallback only — kept up to date by the same fetch-latest call above the Reviews
