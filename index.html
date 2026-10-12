@@ -440,6 +440,14 @@
     margin-top: 16px;
     line-height: 1.6;
   }
+  .buy-modal-renewal-note {
+    font-size: 13px;
+    color: rgba(230, 224, 211, 0.75);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(230, 224, 211, 0.15);
+  }
   .buy-modal-status {
     font-size: 13px;
     color: rgba(230, 224, 211, 0.75);
@@ -1073,7 +1081,12 @@
     })
 
     function resetBuyModalBody() {
-      buyModalBody.innerHTML = '<div id="buyModalError" class="buy-modal-error" style="display: none"></div><div id="checkout"></div>'
+      // Auto-renewal terms, shown right above the actual payment form — not just somewhere
+      // earlier on the page — so the disclosure is the last thing seen before paying, not
+      // something that has to be found separately.
+      buyModalBody.innerHTML =
+        '<p class="buy-modal-renewal-note">This plan runs on a 12-month commitment, billed monthly, and automatically renews for another 12-month term when it ends. Canceling early carries a one-time 3-month payout.</p>' +
+        '<div id="buyModalError" class="buy-modal-error" style="display: none"></div><div id="checkout"></div>'
     }
 
     function closeBuyModal() {
