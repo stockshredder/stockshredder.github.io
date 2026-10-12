@@ -691,7 +691,7 @@
         <a id="download-mac" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-0.6.0-universal.dmg">Start Free — Download for Mac</a>
         <p class="note">25 clips, no card required · macOS · Intel &amp; Apple Silicon</p>
         <p class="note" id="version-note">Version 0.6.0</p>
-        <p class="note">Windows support is on the way — not ready to download yet.</p>
+        <p class="note"><a id="download-win" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-Setup-0.6.0.exe" style="color: inherit">Download for Windows</a></p>
       </div>
     </div>
   </section>
@@ -943,10 +943,15 @@
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((release) => {
         const dmg = (release.assets || []).find((a) => a.name.endsWith('.dmg'))
+        const exe = (release.assets || []).find((a) => a.name.endsWith('.exe'))
         if (dmg) {
           document.getElementById('download-mac').href = dmg.browser_download_url
           document.getElementById('download-mac-closing').href = dmg.browser_download_url
           DOWNLOAD_URL = dmg.browser_download_url
+        }
+        if (exe) {
+          const winLink = document.getElementById('download-win')
+          if (winLink) winLink.href = exe.browser_download_url
         }
         if (release.tag_name) document.getElementById('version-note').textContent = 'Version ' + release.tag_name.replace(/^v/, '')
       })
