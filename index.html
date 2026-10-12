@@ -166,6 +166,25 @@
     transition: transform 0.15s ease, background 0.15s ease;
   }
   .btn:hover { background: #ffffff; transform: translateY(-1px); }
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 28px;
+    background: transparent;
+    color: #e6e0d3;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(230, 224, 211, 0.35);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  .btn-outline:hover { background: rgba(230, 224, 211, 0.08); border-color: rgba(230, 224, 211, 0.6); transform: translateY(-1px); }
   .note {
     margin-top: 18px;
     font-size: 12px;
@@ -691,7 +710,7 @@
         <a id="download-mac" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-0.6.0-universal.dmg">Start Free — Download for Mac</a>
         <p class="note">25 clips, no card required · macOS · Intel &amp; Apple Silicon</p>
         <p class="note" id="version-note">Version 0.6.0</p>
-        <p class="note"><a id="download-win" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-Setup-0.6.0.exe" style="color: inherit">Download for Windows</a></p>
+        <a id="download-win" class="btn-outline" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-Setup-0.6.0.exe" style="margin-top: 14px">Download for Windows</a>
       </div>
     </div>
   </section>
@@ -886,6 +905,7 @@
     <div class="inner">
       <a id="download-mac-closing" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-0.6.0-universal.dmg">Start Free</a>
       <p class="note">25 clips, no card required · macOS · Intel &amp; Apple Silicon</p>
+      <a id="download-win-closing" class="btn-outline" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.0/Stock-Shredder-Setup-0.6.0.exe" style="margin-top: 14px">Download for Windows</a>
     </div>
   </section>
 
@@ -952,6 +972,8 @@
         if (exe) {
           const winLink = document.getElementById('download-win')
           if (winLink) winLink.href = exe.browser_download_url
+          const winLinkClosing = document.getElementById('download-win-closing')
+          if (winLinkClosing) winLinkClosing.href = exe.browser_download_url
         }
         if (release.tag_name) document.getElementById('version-note').textContent = 'Version ' + release.tag_name.replace(/^v/, '')
       })
