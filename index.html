@@ -319,6 +319,35 @@
     margin-bottom: 48px;
     font-size: 16px;
   }
+  .billing-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .billing-toggle-btn {
+    background: transparent;
+    border: 1px solid rgba(230, 224, 211, 0.3);
+    color: rgba(230, 224, 211, 0.6);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .billing-toggle-btn.is-active {
+    background: rgba(200, 32, 26, 0.12);
+    border-color: rgba(200, 32, 26, 0.6);
+    color: #e6e0d3;
+  }
+  .billing-toggle-save {
+    margin-left: 4px;
+    color: #c8201a;
+  }
   .plans {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -757,10 +786,14 @@
   <section class="hairline" id="pricing">
     <div class="inner-wide">
       <h2>Pricing</h2>
+      <div class="billing-toggle" role="group" aria-label="Billing interval" id="billingToggle">
+        <button type="button" class="billing-toggle-btn is-active" data-billing="month">Monthly</button>
+        <button type="button" class="billing-toggle-btn" data-billing="year">Annual <span class="billing-toggle-save">Save 10%</span></button>
+      </div>
       <div class="plans">
         <div class="plan">
           <div class="plan-name">Starter</div>
-          <div class="plan-price">$25<span>/mo</span></div>
+          <div class="plan-price" data-monthly="25" data-annual="270">$25<span>/mo</span></div>
           <div class="plan-clips">100 clips/mo</div>
           <div class="plan-per-clip">$0.25 / clip</div>
           <button class="plan-buy" data-plan="starter">Buy now</button>
@@ -768,14 +801,14 @@
         <div class="plan recommended">
           <div class="plan-badge">Best value</div>
           <div class="plan-name">Creator</div>
-          <div class="plan-price">$59<span>/mo</span></div>
+          <div class="plan-price" data-monthly="59" data-annual="637">$59<span>/mo</span></div>
           <div class="plan-clips">400 clips/mo</div>
           <div class="plan-per-clip">$0.15 / clip</div>
           <button class="plan-buy" data-plan="creator">Buy now</button>
         </div>
         <div class="plan">
           <div class="plan-name">Pro</div>
-          <div class="plan-price">$109<span>/mo</span></div>
+          <div class="plan-price" data-monthly="109" data-annual="1177">$109<span>/mo</span></div>
           <div class="plan-clips">1,000 clips/mo</div>
           <div class="plan-per-clip">$0.11 / clip</div>
           <div class="plan-note">Creates copy-paste keywords.</div>
@@ -783,7 +816,7 @@
         </div>
         <div class="plan">
           <div class="plan-name">Studio</div>
-          <div class="plan-price">$199<span>/mo</span></div>
+          <div class="plan-price" data-monthly="199" data-annual="2149">$199<span>/mo</span></div>
           <div class="plan-clips">2,000 clips/mo</div>
           <div class="plan-per-clip">$0.10 / clip</div>
           <div class="plan-note">Creates copy-paste keywords.</div>
@@ -791,7 +824,7 @@
           <button class="plan-buy" data-plan="studio">Buy now</button>
         </div>
       </div>
-      <p class="note" style="text-align: center">All plans run on a 12-month commitment or billed monthly. Automatically renew for another 12 months at the end of annual commitment or canceling carries a one-time 3-month payout. See the FAQ below for details.</p>
+      <p class="note" style="text-align: center">All plans run on a 12-month commitment or billed monthly. Annual commitments automatically renew for another 12 months at the end of each term; canceling early carries a one-time 3-month payout. Monthly billing can be canceled anytime, carrying a one-time 2-month payout. See the FAQ below for details.</p>
     </div>
   </section>
 
@@ -1133,8 +1166,25 @@
     let currentCheckout = null
     let currentSessionId = null
 
+    // ---------- Billing toggle (Monthly / Annual) ----------
+    let currentInterval = 'month'
+    const billingToggle = document.getElementById('billingToggle')
+    if (billingToggle) {
+      billingToggle.querySelectorAll('[data-billing]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          currentInterval = btn.dataset.billing
+          billingToggle.querySelectorAll('[data-billing]').forEach((b) => b.classList.toggle('is-active', b === btn))
+          document.querySelectorAll('.plan-price').forEach((priceEl) => {
+            const amount = Number(currentInterval === 'year' ? priceEl.dataset.annual : priceEl.dataset.monthly)
+            const suffix = currentInterval === 'year' ? '/yr' : '/mo'
+            priceEl.innerHTML = '$' + amount.toLocaleString('en-US') + '<span>' + suffix + '</span>'
+          })
+        })
+      })
+    }
+
     document.querySelectorAll('.plan-buy').forEach((button) => {
-      button.addEventListener('click', () => void openBuyModal(button.dataset.plan))
+      button.addEventListener('click', () => void openBuyModal(button.dataset.plan, currentInterval))
     })
     buyModalClose.addEventListener('click', closeBuyModal)
     buyOverlay.addEventListener('click', (e) => {
@@ -1144,12 +1194,20 @@
       if (e.key === 'Escape' && buyOverlay.style.display !== 'none') closeBuyModal()
     })
 
-    function resetBuyModalBody() {
+    // interval defaults to 'month' so a stray call elsewhere (there isn't one today, but better
+    // safe) can't end up with an undefined/blank disclosure.
+    function resetBuyModalBody(interval) {
       // Auto-renewal terms, shown right above the actual payment form — not just somewhere
       // earlier on the page — so the disclosure is the last thing seen before paying, not
-      // something that has to be found separately.
+      // something that has to be found separately. Matches whichever billing interval was
+      // actually selected, since the payout-on-early-cancel amount differs (2 months monthly,
+      // 3 months annual — see the Worker's payoutMonthsForInterval).
+      const note =
+        interval === 'year'
+          ? 'This plan is billed annually and automatically renews for another 12-month term when it ends. Canceling early carries a one-time 3-month payout.'
+          : 'This plan runs on a 12-month commitment, billed monthly, and automatically renews for another 12-month term when it ends. Canceling early carries a one-time 2-month payout.'
       buyModalBody.innerHTML =
-        '<p class="buy-modal-renewal-note">This plan runs on a 12-month commitment, billed monthly, and automatically renews for another 12-month term when it ends. Canceling early carries a one-time 3-month payout.</p>' +
+        '<p class="buy-modal-renewal-note">' + note + '</p>' +
         '<div id="buyModalError" class="buy-modal-error" style="display: none"></div><div id="checkout"></div>'
     }
 
@@ -1160,12 +1218,12 @@
         currentCheckout = null
       }
       currentSessionId = null
-      resetBuyModalBody()
+      resetBuyModalBody('month')
     }
 
-    async function openBuyModal(planId) {
+    async function openBuyModal(planId, interval) {
       buyModalPlanName.textContent = PLAN_NAMES[planId] || planId
-      resetBuyModalBody()
+      resetBuyModalBody(interval)
       buyOverlay.style.display = 'flex'
       try {
         currentCheckout = await stripe.createEmbeddedCheckoutPage({
@@ -1173,7 +1231,7 @@
             const res = await fetch(REVIEWS_API + '/checkout', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ planId })
+              body: JSON.stringify({ planId, interval })
             })
             const data = await res.json()
             if (!data.clientSecret || !data.sessionId) throw new Error('Could not start checkout')
