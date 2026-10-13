@@ -834,7 +834,7 @@
           <button class="plan-buy" data-plan="studio">Buy now</button>
         </div>
       </div>
-      <p class="note" style="text-align: center">All plans run on a 12-month commitment or billed monthly. Annual commitments automatically renew for another 12 months at the end of each term; canceling early carries a one-time 3-month payout. Monthly billing can be canceled anytime, carrying a one-time 2-month payout. See the FAQ below for details.</p>
+      <p class="note" style="text-align: center">All plans are billed monthly or on a 12-month commitment. Annual commitments automatically renew for another 12 months at the end of each term; canceling early carries a one-time 2-month payout. Monthly billing can be canceled anytime, carrying a one-time 2-month payout. See the FAQ below for details.</p>
     </div>
   </section>
 
@@ -948,7 +948,7 @@
             <span>Can I cancel or change my plan anytime?</span>
             <span class="faq-icon">+</span>
           </button>
-          <div class="faq-answer">You can change plans anytime from right inside the app. Plans run on a 12-month commitment, billed monthly, that automatically renews for another 12-month term when it ends. Canceling carries a one-time 3-month payout.</div>
+          <div class="faq-answer">You can change plans anytime from right inside the app. Plans are billed monthly or on a 12-month commitment, and automatically renew for another 12-month term when it ends. Canceling carries a one-time 2-month payout.</div>
         </div>
         <div class="faq-item">
           <button class="faq-question" type="button">
@@ -1221,12 +1221,12 @@
     function resetBuyModalBody(interval) {
       // Auto-renewal terms, shown right above the actual payment form — not just somewhere
       // earlier on the page — so the disclosure is the last thing seen before paying, not
-      // something that has to be found separately. Matches whichever billing interval was
-      // actually selected, since the payout-on-early-cancel amount differs (2 months monthly,
-      // 3 months annual — see the Worker's payoutMonthsForInterval).
+      // something that has to be found separately. The early-cancel payout is now 2 months
+      // either way (see the Worker's payoutMonthsForInterval) — only the renewal wording
+      // differs by interval.
       const note =
         interval === 'year'
-          ? 'This plan is billed annually and automatically renews for another 12-month term when it ends. Canceling early carries a one-time 3-month payout.'
+          ? 'This plan is billed annually and automatically renews for another 12-month term when it ends. Canceling early carries a one-time 2-month payout.'
           : 'This plan runs on a 12-month commitment, billed monthly, and automatically renews for another 12-month term when it ends. Canceling early carries a one-time 2-month payout.'
       buyModalBody.innerHTML =
         '<p class="buy-modal-renewal-note">' + note + '</p>' +
