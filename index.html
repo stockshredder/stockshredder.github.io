@@ -19,6 +19,23 @@
     font-family: 'SwampWitch';
     src: url('SwampWitch.ttf');
   }
+  /* Anton — the same DEADWORK display face used for every big headline on deadworkstudio.com,
+     so Stock Shredder's two section headlines read as the same type family as the rest of the
+     brand instead of a generic system font. SwampWitch stays untouched — that's this product's
+     own brand mark, not a site-wide face. */
+  @font-face {
+    font-family: 'Anton';
+    src: url('anton.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  :root {
+    --font-display: 'Anton', 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', Menlo, Monaco, monospace;
+    /* Same low-opacity film-stock grain as the rest of the DEADWORK sites — texture, not noise. */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html {
     scroll-behavior: smooth;
@@ -26,7 +43,23 @@
   html, body {
     background: #0a0a09;
     color: #e6e0d3;
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
+  }
+  body {
+    position: relative;
+  }
+  /* Film-stock grain over the whole page, same technique as deadworkstudio.com and the app
+     itself — fixed + pointer-events:none so it never intercepts clicks or scrolls. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    pointer-events: none;
+    background-image: var(--grain);
+    background-size: 180px 180px;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
   }
   section {
     padding: 64px 24px;
@@ -113,9 +146,9 @@
     height: 20px;
     padding: 0 7px;
     border: 1px solid rgba(230, 224, 211, 0.4);
-    border-radius: 2px;
+    border-radius: 0;
     color: rgba(230, 224, 211, 0.75);
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -130,6 +163,7 @@
     }
   }
   .tagline {
+    font-family: var(--font-mono);
     margin-top: 18px;
     font-size: 15px;
     letter-spacing: 0.28em;
@@ -154,14 +188,14 @@
     padding: 16px 34px;
     background: #eee7d6;
     color: #0a0a09;
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: 0.04em;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
     border: none;
-    border-radius: 2px;
+    border-radius: 0;
     cursor: pointer;
     transition: transform 0.15s ease, background 0.15s ease;
   }
@@ -177,7 +211,8 @@
     writing-mode: vertical-rl;
     background: #c8201a;
     color: #eee7d6;
-    font-weight: 700;
+    font-family: var(--font-mono);
+    font-weight: 500;
     font-size: 13px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -199,14 +234,14 @@
     padding: 12px 28px;
     background: transparent;
     color: #e6e0d3;
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.04em;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
     border: 1px solid rgba(230, 224, 211, 0.35);
-    border-radius: 2px;
+    border-radius: 0;
     cursor: pointer;
     transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
   }
@@ -223,7 +258,8 @@
 
   /* ---------- Section headings ---------- */
   h2 {
-    font-size: 13px;
+    font-family: var(--font-mono);
+    font-size: 12px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
     color: rgba(200, 32, 26, 0.85);
@@ -231,10 +267,13 @@
     margin-bottom: 20px;
   }
   h3 {
-    font-size: 28px;
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4.5vw, 44px);
+    line-height: 1;
+    text-transform: uppercase;
+    font-weight: 400;
     text-align: center;
     margin-bottom: 40px;
-    font-weight: 600;
   }
   .lede {
     font-size: 18px;
@@ -280,6 +319,7 @@
     margin-bottom: 10px;
   }
   .step-title {
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -304,6 +344,7 @@
     border: none;
   }
   .founder-attr {
+    font-family: var(--font-mono);
     margin-top: 24px;
     text-align: center;
     font-size: 13px;
@@ -330,12 +371,13 @@
     background: transparent;
     border: 1px solid rgba(230, 224, 211, 0.3);
     color: rgba(230, 224, 211, 0.6);
+    font-family: var(--font-mono);
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 8px 16px;
-    border-radius: 2px;
+    border-radius: 0;
     cursor: pointer;
     transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
@@ -377,13 +419,15 @@
     transform: translateX(-50%);
     background: #8fd687;
     color: #0a0a09;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     padding: 4px 10px;
-    border-radius: 2px;
+    border-radius: 0;
   }
   .plan-name {
+    font-family: var(--font-mono);
     font-size: 13px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -391,11 +435,13 @@
     margin-bottom: 10px;
   }
   .plan-price {
-    font-size: 32px;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 400;
     margin-bottom: 4px;
   }
   .plan-price span {
+    font-family: 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
     font-size: 13px;
     font-weight: 400;
     color: rgba(230, 224, 211, 0.5);
@@ -431,9 +477,10 @@
     background: transparent;
     color: #e6e0d3;
     border: 1px solid rgba(230, 224, 211, 0.3);
-    border-radius: 2px;
+    border-radius: 0;
+    font-family: var(--font-mono);
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
@@ -480,6 +527,7 @@
     color: #e6e0d3;
   }
   .buy-modal-title {
+    font-family: var(--font-mono);
     font-size: 13px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -487,8 +535,9 @@
     margin-bottom: 4px;
   }
   .buy-modal-plan {
-    font-size: 22px;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 400;
     margin-bottom: 20px;
   }
   .buy-modal-error {
@@ -575,6 +624,15 @@
   .reviews-list:empty {
     margin-top: 0;
   }
+  .reviews-count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+    color: rgba(230, 224, 211, 0.4);
+    margin: -24px 0 0;
+  }
   .review-card {
     border: 1px solid rgba(230, 224, 211, 0.14);
     padding: 22px;
@@ -592,6 +650,7 @@
     margin-bottom: 14px;
   }
   .review-name {
+    font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -613,7 +672,7 @@
     font-size: 15px;
     padding: 12px 14px;
     margin-bottom: 14px;
-    border-radius: 2px;
+    border-radius: 0;
   }
   .review-form textarea {
     min-height: 100px;
@@ -724,6 +783,7 @@
     color: #e6e0d3;
   }
   .powered-by {
+    font-family: var(--font-mono);
     display: block;
     margin-top: 8px;
     font-size: 10px;
@@ -871,6 +931,7 @@
     <div class="inner-wide">
       <h2>Reviews</h2>
       <h3>What people are saying</h3>
+      <p class="reviews-count" id="reviewsCount" hidden></p>
       <div id="reviewsList" class="reviews-list"></div>
 
       <form id="reviewForm" class="review-form">
@@ -1075,7 +1136,11 @@
       .then((r) => (r.ok ? r.json() : []))
       .then((reviews) => {
         const list = document.getElementById('reviewsList')
+        const count = document.getElementById('reviewsCount')
         if (!reviews.length) return
+        const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        count.textContent = `${avg.toFixed(1)}★ average · ${reviews.length} review${reviews.length === 1 ? '' : 's'}`
+        count.hidden = false
         list.innerHTML = reviews
           .map(
             (r) => `
