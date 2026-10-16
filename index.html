@@ -340,13 +340,13 @@
     transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
   .billing-toggle-btn.is-active {
-    background: rgba(200, 32, 26, 0.12);
-    border-color: rgba(200, 32, 26, 0.6);
+    background: rgba(143, 214, 135, 0.12);
+    border-color: rgba(143, 214, 135, 0.6);
     color: #e6e0d3;
   }
   .billing-toggle-save {
     margin-left: 4px;
-    color: #c8201a;
+    color: #8fd687;
   }
   .plans {
     display: grid;
@@ -368,15 +368,15 @@
     position: relative;
   }
   .plan.recommended {
-    border-color: rgba(200, 32, 26, 0.6);
+    border-color: rgba(143, 214, 135, 0.6);
   }
   .plan-badge {
     position: absolute;
     top: -11px;
     left: 50%;
     transform: translateX(-50%);
-    background: #c8201a;
-    color: #f5ede0;
+    background: #8fd687;
+    color: #0a0a09;
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -403,7 +403,7 @@
   .plan-save {
     font-size: 11px;
     letter-spacing: 0.04em;
-    color: #c8201a;
+    color: #8fd687;
     margin-bottom: 4px;
   }
   .plan-clips {
@@ -413,7 +413,7 @@
   }
   .plan-per-clip {
     font-size: 12px;
-    color: rgba(230, 224, 211, 0.35);
+    color: rgba(230, 224, 211, 0.6);
     margin-bottom: 4px;
   }
   .plan-note {
@@ -1201,14 +1201,25 @@
               }
             }
           })
-          // "100 clips/mo" next to an annual price is a unit mismatch — show the yearly total
-          // instead so the clip count actually matches the billing period being shown.
-          document.querySelectorAll('.plan-clips').forEach((clipsEl) => {
+          // Clips are always granted monthly regardless of billing cycle — switching this to a
+          // yearly total (e.g. "1,200 clips/yr") read like the whole year's worth lands upfront,
+          // which contradicts the "clips reset on the 1st" note right above the grid. Left as a
+          // flat monthly figure no matter which billing interval is selected.
+          //
+          // Cost-per-clip DOES change with billing interval (annual is cheaper per clip since the
+          // same clip allowance costs less over the year) — recompute it from each plan's own
+          // price and clip data instead of leaving it fixed at the monthly rate.
+          document.querySelectorAll('.plan').forEach((card) => {
+            const priceEl = card.querySelector('.plan-price')
+            const clipsEl = card.querySelector('.plan-clips')
+            const perClipEl = card.querySelector('.plan-per-clip')
+            if (!priceEl || !clipsEl || !perClipEl) return
             const monthlyClips = Number(clipsEl.dataset.clipsMonthly)
-            clipsEl.textContent =
+            const costPerClip =
               currentInterval === 'year'
-                ? (monthlyClips * 12).toLocaleString('en-US') + ' clips/yr'
-                : monthlyClips.toLocaleString('en-US') + ' clips/mo'
+                ? Number(priceEl.dataset.annual) / (monthlyClips * 12)
+                : Number(priceEl.dataset.monthly) / monthlyClips
+            perClipEl.textContent = '$' + costPerClip.toFixed(2) + ' / clip'
           })
         })
       })
@@ -1295,12 +1306,12 @@
         })
         const data = await res.json()
         if (!data.ok || !data.activationKey) {
-          buyModalBody.innerHTML = '<p class="buy-modal-error">We could not confirm the payment. If you were charged, email shredderstock@gmail.com and we’ll sort it out.</p>'
+          buyModalBody.innerHTML = '<p class="buy-modal-error">We could not confirm the payment. If you were charged, email deadworkstudio@gmail.com and we’ll sort it out.</p>'
           return
         }
         showActivationKey(data.activationKey)
       } catch {
-        buyModalBody.innerHTML = '<p class="buy-modal-error">We could not confirm the payment. If you were charged, email shredderstock@gmail.com and we’ll sort it out.</p>'
+        buyModalBody.innerHTML = '<p class="buy-modal-error">We could not confirm the payment. If you were charged, email deadworkstudio@gmail.com and we’ll sort it out.</p>'
       }
     }
 
