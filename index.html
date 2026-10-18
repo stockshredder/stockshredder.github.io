@@ -97,11 +97,13 @@
        dim than a plain video would to keep it from competing with the hero copy on top. */
     opacity: 0.22;
   }
+  /* Direct report 2026-10-18: mimic deadworkstudio.com's calmer look, which dropped the red tint
+     from every hero/welcome surface it used to carry — same move here, so the backdrop reads as
+     a dim, neutral vignette instead of a blood-red glow behind the logo. */
   .hero-scrim {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 70% 140% at 50% -10%, rgba(200, 32, 26, 0.22), transparent 70%),
       radial-gradient(ellipse 60% 50% at 50% 50%, rgba(10, 10, 9, 0.65), rgba(10, 10, 9, 0.85) 70%),
       linear-gradient(180deg, rgba(10, 10, 9, 0.5) 0%, rgba(10, 10, 9, 0.6) 50%, #0a0a09 100%);
   }
@@ -119,7 +121,7 @@
     justify-content: center;
     gap: 0.5em;
     line-height: 1;
-    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.7)) drop-shadow(0 0 26px rgba(200, 32, 26, 0.4));
+    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.7));
   }
   .logo span {
     display: block;
@@ -180,39 +182,46 @@
   /* Reserved for a full-bleed screen recording of a real shred, once one exists to show —
      deliberately not faked with a placeholder image in the meantime. */
 
-  /* ---------- Buttons ---------- */
+  /* ---------- Buttons — same component deadworkstudio.com's product pages use (.btn/.btn-icon/
+     .btn-outline, bone-colored primary + an inline platform glyph), not this page's old plain
+     text button. ---------- */
   .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    padding: 16px 34px;
-    background: #eee7d6;
+    min-height: 48px;
+    padding: 16px 32px;
+    background: #e6e0d3;
     color: #0a0a09;
     font-family: var(--font-mono);
     font-weight: 500;
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
-    border: none;
+    border: 1px solid #e6e0d3;
     border-radius: 0;
     cursor: pointer;
     transition: transform 0.15s ease, background 0.15s ease;
   }
-  .btn:hover { background: #ffffff; transform: translateY(-1px); }
+  .btn:hover { background: #ffffff; border-color: #ffffff; transform: translateY(-1px); }
+  .btn-icon { display: block; flex-shrink: 0; }
 
   /* ---------- Earn tab — sticky, so the referral/reward program isn't buried at the bottom
-     of a long single-page scroll. Vertical text keeps it from blocking page content. ---------- */
+     of a long single-page scroll. Vertical text keeps it from blocking page content.
+     Direct report 2026-10-18: brand green, mimicking deadworkstudio.com's own green Earn tab,
+     not this page's old red. ---------- */
   .earn-tab {
     position: fixed;
     right: 0;
     top: 50%;
     transform: translateY(-50%);
     writing-mode: vertical-rl;
-    background: #c8201a;
-    color: #eee7d6;
+    background: #8fd687;
+    color: #0a0a09;
     font-family: var(--font-mono);
-    font-weight: 500;
+    font-weight: 700;
     font-size: 13px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -223,14 +232,16 @@
     z-index: 50;
     transition: padding-right 0.15s ease, background 0.15s ease;
   }
-  .earn-tab:hover { background: #e02a22; padding-right: 16px; }
+  .earn-tab:hover { background: #79c470; padding-right: 16px; }
   @media (max-width: 640px) {
     .earn-tab { font-size: 11px; padding: 14px 7px; letter-spacing: 0.1em; }
   }
   .btn-outline {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
+    min-height: 48px;
     padding: 12px 28px;
     background: transparent;
     color: #e6e0d3;
@@ -240,7 +251,7 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
-    border: 1px solid rgba(230, 224, 211, 0.35);
+    border: 1px solid rgba(230, 224, 211, 0.3);
     border-radius: 0;
     cursor: pointer;
     transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
@@ -255,6 +266,17 @@
   .cta-block {
     margin-top: 44px;
   }
+  /* Side-by-side Mac/Windows buttons, same layout as deadworkstudio.com's product-hero-cta —
+     this page used to stack Mac, a note, then Windows in a single column. */
+  .download-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  .download-row .btn, .download-row .btn-outline { flex: 1 1 0; min-width: 0; }
+  @media (max-width: 560px) {
+    .download-row { flex-direction: column; }
+  }
 
   /* ---------- Section headings ---------- */
   h2 {
@@ -262,7 +284,7 @@
     font-size: 12px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: rgba(200, 32, 26, 0.85);
+    color: rgba(143, 214, 135, 0.9);
     text-align: center;
     margin-bottom: 20px;
   }
@@ -280,6 +302,9 @@
     line-height: 1.7;
     color: rgba(230, 224, 211, 0.85);
     text-align: center;
+  }
+  .lede + .lede {
+    margin-top: 16px;
   }
   .hairline {
     border-top: 1px solid rgba(230, 224, 211, 0.1);
@@ -487,8 +512,8 @@
     transition: background 0.15s ease, border-color 0.15s ease;
   }
   .plan-buy:hover {
-    background: rgba(200, 32, 26, 0.12);
-    border-color: rgba(200, 32, 26, 0.6);
+    background: rgba(143, 214, 135, 0.12);
+    border-color: rgba(143, 214, 135, 0.6);
   }
 
   /* ---------- Buy modal ---------- */
@@ -604,7 +629,7 @@
   }
   .reward-amount {
     font-size: 15px;
-    color: rgba(200, 32, 26, 0.9);
+    color: rgba(143, 214, 135, 0.9);
     font-weight: 700;
     white-space: nowrap;
     padding-left: 16px;
@@ -638,7 +663,7 @@
     padding: 22px;
   }
   .review-stars {
-    color: rgba(200, 32, 26, 0.9);
+    color: rgba(143, 214, 135, 0.9);
     font-size: 15px;
     letter-spacing: 2px;
     margin-bottom: 10px;
@@ -690,7 +715,7 @@
     color: rgba(230, 224, 211, 0.3);
   }
   .review-form-rating span.filled {
-    color: rgba(200, 32, 26, 0.9);
+    color: rgba(143, 214, 135, 0.9);
   }
   .review-form-foot {
     text-align: center;
@@ -732,7 +757,7 @@
   .faq-icon {
     flex-shrink: 0;
     font-size: 20px;
-    color: rgba(200, 32, 26, 0.9);
+    color: rgba(143, 214, 135, 0.9);
     width: 20px;
     text-align: center;
   }
@@ -753,9 +778,7 @@
   /* ---------- Closing CTA ---------- */
   .closing {
     text-align: center;
-    background:
-      radial-gradient(ellipse 70% 140% at 50% 110%, rgba(200, 32, 26, 0.16), transparent 70%),
-      linear-gradient(#0a0a09, #0d0d0c);
+    background: linear-gradient(#0a0a09, #0d0d0c);
   }
 
   footer {
@@ -832,10 +855,18 @@
         </div>
       </div>
       <div class="cta-block">
-        <a id="download-mac" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.1/Stock-Shredder-0.6.1-universal.dmg">Start Free — Download for Mac</a>
+        <div class="download-row">
+          <a id="download-mac" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.3/Stock-Shredder-0.6.3-universal.dmg">
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.015-.06-.045-.226-.045-.395 0-1.14.572-2.27 1.206-2.98.804-.914 2.19-1.59 3.14-1.62.015.1.163.24.163.39zm4.565 15.71c-.03.065-.467 1.588-1.544 3.15-.945 1.36-1.93 2.72-3.48 2.74-1.52.03-2.01-.9-3.75-.9-1.74 0-2.28.87-3.72.93-1.5.06-2.64-1.47-3.6-2.82-1.95-2.76-3.45-7.79-1.44-11.19.99-1.68 2.76-2.75 4.68-2.78 1.47-.03 2.85.99 3.75.99.9 0 2.58-1.22 4.35-1.04.74.03 2.82.3 4.16 2.25-.108.07-2.49 1.45-2.46 4.33.03 3.44 3.02 4.59 3.06 4.61z"/></svg>
+            <span>Start Free — Download for Mac</span>
+          </a>
+          <a id="download-win" class="btn-outline" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.3/Stock-Shredder-Setup-0.6.3.exe">
+            <svg class="btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/></svg>
+            <span>Download for Windows</span>
+          </a>
+        </div>
         <p class="note">25 clips, no card required · macOS · Intel &amp; Apple Silicon</p>
-        <p class="note" id="version-note">Version 0.6.1</p>
-        <a id="download-win" class="btn-outline" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.1/Stock-Shredder-Setup-0.6.1.exe" style="margin-top: 14px">Download for Windows</a>
+        <p class="note" id="version-note">Version 0.6.3</p>
       </div>
     </div>
   </section>
@@ -843,9 +874,9 @@
   <section class="founder hairline">
     <div class="inner">
       <h2>Who it's for</h2>
-      <p class="lede">Working filmmakers, videographers, DPs, and small production companies sitting on terabytes of footage that never made it to a stock marketplace. If you finish a shoot, deliver the edit, and let the rest of the card die on a drive, this is for you — we're filmmakers making tools for filmmakers.</p>
-      <blockquote>"Stock footage has also been a constant derailing — hundreds of hours I could've spent shooting instead of sorting. I built Stock Shredder to fix the one constraint that was costing me the most. It's the same shot selection I'd make myself, automated."</blockquote>
-      <p class="founder-attr">— Founder, Stock Shredder</p>
+      <p class="lede">Filmmakers, videographers, DPs, and small production companies sitting on terabytes of footage that never made it to a stock marketplace.</p>
+      <p class="lede">Turn unused footage sitting on your drives into thousands of revenue-producing assets.</p>
+      <blockquote>Stock footage is profitable but takes hundreds of hours we could've spent doing other things instead of sorting. It's the same shot selection we'd make ourselves while saving time.</blockquote>
     </div>
   </section>
 
@@ -962,7 +993,7 @@
             <span>Do unused clips expire?</span>
             <span class="faq-icon">+</span>
           </button>
-          <div class="faq-answer">No. If you don't use all your clips in a given month, the unused ones roll over into the next month automatically — no cap, and they never expire. Once you've paid for them, they're yours to use whenever you're ready.</div>
+          <div class="faq-answer">No. If you don't use all your clips in a given month, the unused ones roll over into the next month automatically. Once you've paid for them, they're yours to use whenever you're ready.</div>
         </div>
         <div class="faq-item">
           <button class="faq-question" type="button">
@@ -1037,9 +1068,17 @@
 
   <section class="closing">
     <div class="inner">
-      <a id="download-mac-closing" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.1/Stock-Shredder-0.6.1-universal.dmg">Start Free</a>
+      <div class="download-row">
+        <a id="download-mac-closing" class="btn" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.3/Stock-Shredder-0.6.3-universal.dmg">
+          <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.015-.06-.045-.226-.045-.395 0-1.14.572-2.27 1.206-2.98.804-.914 2.19-1.59 3.14-1.62.015.1.163.24.163.39zm4.565 15.71c-.03.065-.467 1.588-1.544 3.15-.945 1.36-1.93 2.72-3.48 2.74-1.52.03-2.01-.9-3.75-.9-1.74 0-2.28.87-3.72.93-1.5.06-2.64-1.47-3.6-2.82-1.95-2.76-3.45-7.79-1.44-11.19.99-1.68 2.76-2.75 4.68-2.78 1.47-.03 2.85.99 3.75.99.9 0 2.58-1.22 4.35-1.04.74.03 2.82.3 4.16 2.25-.108.07-2.49 1.45-2.46 4.33.03 3.44 3.02 4.59 3.06 4.61z"/></svg>
+          <span>Start Free</span>
+        </a>
+        <a id="download-win-closing" class="btn-outline" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.3/Stock-Shredder-Setup-0.6.3.exe">
+          <svg class="btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/></svg>
+          <span>Download for Windows</span>
+        </a>
+      </div>
       <p class="note">25 clips, no card required · macOS · Intel &amp; Apple Silicon</p>
-      <a id="download-win-closing" class="btn-outline" href="https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.1/Stock-Shredder-Setup-0.6.1.exe" style="margin-top: 14px">Download for Windows</a>
     </div>
   </section>
 
@@ -1230,7 +1269,7 @@
     // section, the same reasoning as download-mac's own href: this used to be a separate `const`
     // that nothing ever refreshed, so the buy modal kept pointing new customers at an old version
     // long after download-mac itself had moved on.
-    let DOWNLOAD_URL = 'https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.1/Stock-Shredder-0.6.1-universal.dmg'
+    let DOWNLOAD_URL = 'https://github.com/stockshredder/stock-shredder-releases/releases/download/v0.6.3/Stock-Shredder-0.6.3-universal.dmg'
 
     const buyOverlay = document.getElementById('buyOverlay')
     const buyModalPlanName = document.getElementById('buyModalPlanName')
